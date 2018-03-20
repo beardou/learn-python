@@ -1,0 +1,99 @@
+class Person(object):
+    def __init__(self, name):
+        self.hp = 100  # 人物缺省hp值
+        self.name = name
+        self.gun_list = []
+        self.shoot_num = 0
+
+    def __str__(self):
+        if self.hp <= 0:
+            return "%s已经挂了！" % (self.name)
+        elif self.gun_list:
+            return "人物：%s，血量：%s，武器：%s，子弹：%d，子弹伤害值：%d,共射击%d次" % (
+                self.name, self.hp, self.gun_list[0].type, len(self.gun_list[0].danjia.bullet_list),
+                self.gun_list[0].danjia.bullet_list[0].hurt, self.shoot_num)
+        else:
+            return "人物：%s，血量：%s，武器：None" % (self.name, self.hp)
+
+    def zhuangzidan(self, danjia_temp, zidan_temp):
+        danjia_temp.an_zidan(zidan_temp)
+
+    def zhuang_danjia(self, gun_temp, danjia_temp):
+        gun_temp.anzhuang_danjia(danjia_temp)
+
+    def naqiang(self, gun_temp):
+        self.gun_list.append(gun_temp)
+
+    def shoot(self, mubiao):
+        self.gun_list[-1].danjia.bullet_list.pop()
+        mubiao.hp -= self.gun_list[-1].danjia.bullet_list[-1].hurt
+        self.shoot_num += 1
+
+
+class Gun(object):
+    def __init__(self, type):
+        self.type = type
+        self.danjia = None
+
+    def __str__(self):
+        return "---这把枪为%s,这把枪子弹数量为%d" % (self.type, len(self.danjia.bullet_list))
+
+    def anzhuang_danjia(self, danjia_temp):
+        self.danjia = danjia_temp
+
+
+class Danjia(object):
+    def __init__(self):
+        self.max_bullet = 20  # 弹夹最大容量
+        self.bullet_list = []  # 用于接收子弹
+
+    def __str__(self):
+        return "弹夹中子弹数量：%d" % (len(self.bullet_list))
+
+    def an_zidan(self, zidan_temp):
+        self.bullet_list.append(zidan_temp)
+
+
+class Bullet(object):
+    def __init__(self, hurt):
+        self.hurt = hurt
+
+
+def main():
+    # 1.创造一名字叫“老王”的人物
+    laowang = Person("老王")
+
+    # 2.创造一把叫“AK47”的枪
+    ak47 = Gun("AK47")
+
+    # 3.创造一个弹夹
+    danjia = Danjia()
+
+    # 4.老王拿出15发伤害值10的子弹，并装到弹夹中
+    for i in range(15):
+        zidan = Bullet(10)
+        i += 1
+        laowang.zhuangzidan(danjia, zidan)
+
+    # 5.老王将弹夹安装到AK47上
+    laowang.zhuang_danjia(ak47, danjia)
+
+    # 6.老王拿起枪
+    laowang.naqiang(ak47)
+
+    # 7.创造一个名字叫“老宋”的人物
+    laosong = Person("老宋")
+
+    # 8.老王向老宋开枪
+    laowang.shoot(laosong)
+    laowang.shoot(laosong)
+    laowang.shoot(laosong)
+    laowang.shoot(laosong)
+    laowang.shoot(laosong)
+
+    print(laowang)
+    print(laosong)
+
+
+if __name__ == "__main__":
+    main()
