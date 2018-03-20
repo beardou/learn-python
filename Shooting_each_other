@@ -1,0 +1,91 @@
+class Person(object):
+    def __init__(self, name):
+        self.hp = 100  # 人物缺省hp值
+        self.name = name
+        self.gun_list = []
+        self.shoot_num = 0
+
+    def __str__(self):
+        if self.hp <= 0:
+            return "%s已经挂了！" % (self.name)
+        elif self.gun_list:
+            return "人物：%s，血量：%s，武器：%s，子弹：%d/%d，子弹伤害值：%d,共射击%d次" % (
+                self.name, self.hp, self.gun_list[0].type, len(self.gun_list[0].danjia.bullet_list),
+                self.gun_list[0].danjia.max_bullet,self.gun_list[0].danjia.bullet_list[0].hurt, self.shoot_num)
+        else:
+            return "人物：%s，血量：%s，武器：None" % (self.name, self.hp)
+
+    def zhuangzidan(self, danjia_temp, zidan_temp):
+        danjia_temp.an_zidan(zidan_temp)
+
+    def zhuang_danjia(self, gun_temp, danjia_temp):
+        gun_temp.anzhuang_danjia(danjia_temp)
+
+    def naqiang(self, gun_temp):
+        self.gun_list.append(gun_temp)
+
+    def shoot(self, mubiao):
+        self.gun_list[-1].danjia.bullet_list.pop()
+        mubiao.hp -= self.gun_list[-1].danjia.bullet_list[-1].hurt
+        self.shoot_num += 1
+
+
+class Gun(object):
+    def __init__(self, type):
+        self.type = type
+        self.danjia = None
+
+    def __str__(self):
+        return "---这把枪为%s,这把枪子弹数量为%d" % (self.type, len(self.danjia.bullet_list))
+
+    def anzhuang_danjia(self, danjia_temp):
+        self.danjia = danjia_temp
+
+
+class Danjia(object):
+    def __init__(self):
+        self.max_bullet = 20  # 弹夹最大容量
+        self.bullet_list = []  # 用于接收子弹
+
+    def __str__(self):
+        return "弹夹中子弹数量：%d" % (len(self.bullet_list))
+
+    def an_zidan(self, zidan_temp):
+        self.bullet_list.append(zidan_temp)
+
+
+class Bullet(object):
+    def __init__(self, hurt):
+        self.hurt = hurt
+
+
+class Role(object):
+    def __init__(self, name, qiang, zidan_num, zidan_hurt):  # 人物名称、枪类型、子弹数量、子弹伤害值
+        self.instance = Person(name)
+        self.qiang = Gun(qiang)
+        self.danjia = Danjia()
+        self.zidan = 0
+
+        for i in range(zidan_num):
+            self.zidan = Bullet(zidan_hurt)
+            i += 1
+            self.instance.zhuangzidan(self.danjia, self.zidan)
+
+        self.instance.zhuang_danjia(self.qiang, self.danjia)
+        self.instance.naqiang(self.qiang)
+
+
+def main():
+    laowang = Role("老王", "AK47", 15, 10).instance
+    laosong = Role("老宋", "98K", 5, 30).instance
+    laowang.shoot(laosong)
+    laowang.shoot(laosong)
+    laosong.shoot(laowang)
+    laowang.shoot(laosong)
+    laosong.shoot(laowang)
+    print(laowang)
+    print(laosong)
+
+
+if __name__ == "__main__":
+    main()
