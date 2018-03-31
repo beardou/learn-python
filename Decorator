@@ -1,0 +1,22 @@
+
+def W1(func):
+    print("-----这是W1-----")
+    def inner_1():
+        print("------- 这是函数W1-前------")
+        func()
+        print("------- 这是函数W1-后------")
+    return inner_1
+
+def W2(func):
+    print("-----这是W2-----")
+    def inner_1():
+        print("------- 这是函数W2-前------")
+        func()
+        print("------- 这是函数W2-后------")
+    return inner_1
+@W1
+@W2
+def func_1():
+    print("#######这是函数func_1########")
+
+func_1()
